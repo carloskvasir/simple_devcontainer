@@ -35,6 +35,35 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.7] — 2026-03-20
+
+### Corrigido
+
+- **`npm install -g` movido para antes do `USER vscode`** — `/usr/local/lib/node_modules` pertence ao root; rodar como `vscode` gerava `EACCES permission denied (errno: -13, exit code 243)`. Instalação global de npm packages deve rodar como root no Dockerfile; o usuário final consume os binários sem precisar de permissão de escrita
+
+---
+
+## [0.1.6] — 2026-03-20
+
+### Alterado
+
+- **Tags de imagem simplificadas** — `ruby:3.3-slim` e `node:22-slim` (sem sufixo de distro) para seguir o minor estável mais recente de cada runtime
+- **opencode migrado de npm para mise ubi backend** — `mise use -g ubi:sst/opencode` instala diretamente dos releases do GitHub, eliminando instabilidades de 404 do registro npm
+- **`ENV PATH` adicionado antes dos RUN** — expõe `/home/vscode/.local/bin` ao PATH de todos os steps subsequentes, permitindo chamar `mise` diretamente nos `RUN` sem path absoluto
+- **`common-utils` atualizado para versão `:2`** — versão `:1` estava depreciada
+- **`postCreateCommand` corrigido** — revertido de `bin/setup_dev` (que tenta rodar docker compose dentro do devcontainer) para `mise install && bundle install`
+
+---
+
+## [0.1.5] — 2026-03-20
+
+### Corrigido
+
+- **Tag Ruby corrigida** — `ruby:3.3.6-bookworm-slim` não existe no Docker Hub. O formato correto para imagens Ruby slim é `ruby:3.3.6-slim-bookworm` (ordem invertida em relação ao Node)
+- **Base final migrada para `debian:trixie-slim`** — alinha o ambiente de desenvolvimento com o Debian Testing (13), que é a versão utilizada na máquina host
+
+---
+
 ## [0.1.4] — 2026-03-20
 
 ### Alterado

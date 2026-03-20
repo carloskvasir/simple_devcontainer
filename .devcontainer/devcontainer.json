@@ -1,17 +1,24 @@
 {
   "name": "Rails 8 Dev Environment",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "app",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
   "features": {
+    // SSHd: necessário para o RubyMine acessar o container via JetBrains Gateway
     "ghcr.io/devcontainers/features/sshd:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": "latest",
-    "ghcr.io/devcontainers/features/common-utils:1": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": true
     }
   },
   "containerEnv": {
-    "DATABASE_URL": "postgres://postgres:password@localhost:5432/postgres",
+    "DB_HOST": "db",
+    "DB_PORT": "5432",
+    "DB_USERNAME": "postgres",
+    "DB_PASSWORD": "password",
+    "DATABASE_URL": "postgres://postgres:password@db:5432/postgres",
     "REDIS_URL": "redis://localhost:6379/1"
   },
   "customizations": {
@@ -23,6 +30,7 @@
         "pivotal.vscode-manifest-resource"
       ]
     },
+    // RubyMine acessa o container via SSH (feature sshd acima)
     "jetbrains": {
       "backend": "RubyMine"
     }
@@ -35,11 +43,11 @@
     8080
   ],
   "portsAttributes": {
-    "1080": {
-      "label": "Mailcatcher UI"
-    },
     "3000": {
       "label": "Rails Server"
+    },
+    "1080": {
+      "label": "Mailcatcher UI"
     },
     "8080": {
       "label": "Adminer (DB Client)"
