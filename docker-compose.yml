@@ -1,13 +1,5 @@
 version: '3.8'
 services:
-  app:
-    build:
-      context: .
-      dockerfile: .devcontainer/Dockerfile
-    volumes:
-      - ..:/workspaces:cached
-    network_mode: service:db # Permite que a app veja o db como localhost
-
   db:
     image: postgres:16
     restart: always
