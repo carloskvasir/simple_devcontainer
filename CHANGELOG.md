@@ -35,6 +35,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.7] — 2026-03-20
+
+### Corrigido
+
+- **`npm install -g` movido para antes do `USER vscode`** — `/usr/local/lib/node_modules` pertence ao root; rodar como `vscode` gerava `EACCES permission denied (errno: -13, exit code 243)`. Instalação global de npm packages deve rodar como root no Dockerfile; o usuário final consume os binários sem precisar de permissão de escrita
+
+---
+
 ## [0.1.6] — 2026-03-20
 
 ### Alterado

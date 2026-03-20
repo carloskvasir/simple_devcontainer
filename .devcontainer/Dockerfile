@@ -27,6 +27,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=node-base /usr/local /usr/local
 COPY --from=ruby-base /usr/local /usr/local
 
+# Instala npm globals e gems como root — /usr/local pertence ao root.
+# Deve rodar antes do USER vscode para evitar EACCES no node_modules.
+RUN npm install -g @anthropic-ai/claude-code @bitwarden/cli \
+  && gem install mailcatcher sidekiq
+
 # Cria usuário vscode com zsh e sudo sem senha
 RUN useradd -m -s /usr/bin/zsh vscode \
   && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -46,9 +51,5 @@ RUN mise use -g ubi:sst/opencode
 # Ativação do mise nos shells interativos
 RUN echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> ~/.bashrc \
   && echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >> ~/.zshrc
-
-# Ferramentas npm e gems
-RUN npm install -g @anthropic-ai/claude-code @bitwarden/cli \
-  && gem install mailcatcher sidekiq
 
 CMD ["sleep", "infinity"]
