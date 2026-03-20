@@ -35,6 +35,15 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.5] — 2026-03-20
+
+### Corrigido
+
+- **Tag Ruby corrigida** — `ruby:3.3.6-bookworm-slim` não existe no Docker Hub. O formato correto para imagens Ruby slim é `ruby:3.3.6-slim-bookworm` (ordem invertida em relação ao Node)
+- **Base final migrada para `debian:trixie-slim`** — alinha o ambiente de desenvolvimento com o Debian Testing (13), que é a versão utilizada na máquina host
+
+---
+
 ## [0.1.4] — 2026-03-20
 
 ### Alterado

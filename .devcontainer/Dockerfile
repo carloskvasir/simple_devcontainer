@@ -1,7 +1,7 @@
 FROM node:22-bookworm-slim AS node-base
-FROM ruby:3.3.6-bookworm-slim AS ruby-base
+FROM ruby:3.3.6-slim-bookworm AS ruby-base
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
