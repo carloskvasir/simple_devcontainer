@@ -35,6 +35,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.6] — 2026-03-20
+
+### Alterado
+
+- **Tags de imagem simplificadas** — `ruby:3.3-slim` e `node:22-slim` (sem sufixo de distro) para seguir o minor estável mais recente de cada runtime
+- **opencode migrado de npm para mise ubi backend** — `mise use -g ubi:sst/opencode` instala diretamente dos releases do GitHub, eliminando instabilidades de 404 do registro npm
+- **`ENV PATH` adicionado antes dos RUN** — expõe `/home/vscode/.local/bin` ao PATH de todos os steps subsequentes, permitindo chamar `mise` diretamente nos `RUN` sem path absoluto
+- **`common-utils` atualizado para versão `:2`** — versão `:1` estava depreciada
+- **`postCreateCommand` corrigido** — revertido de `bin/setup_dev` (que tenta rodar docker compose dentro do devcontainer) para `mise install && bundle install`
+
+---
+
 ## [0.1.5] — 2026-03-20
 
 ### Corrigido

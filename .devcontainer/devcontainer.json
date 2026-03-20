@@ -4,9 +4,10 @@
     "dockerfile": "Dockerfile"
   },
   "features": {
+    // SSHd: necessário para o RubyMine acessar o container via JetBrains Gateway
     "ghcr.io/devcontainers/features/sshd:1": {},
     "ghcr.io/devcontainers/features/github-cli:1": "latest",
-    "ghcr.io/devcontainers/features/common-utils:1": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": true
     }
   },
@@ -23,6 +24,7 @@
         "pivotal.vscode-manifest-resource"
       ]
     },
+    // RubyMine acessa o container via SSH (feature sshd acima)
     "jetbrains": {
       "backend": "RubyMine"
     }
@@ -35,15 +37,9 @@
     8080
   ],
   "portsAttributes": {
-    "1080": {
-      "label": "Mailcatcher UI"
-    },
-    "3000": {
-      "label": "Rails Server"
-    },
-    "8080": {
-      "label": "Adminer (DB Client)"
-    }
+    "3000": { "label": "Rails Server" },
+    "1080": { "label": "Mailcatcher UI" },
+    "8080": { "label": "Adminer (DB Client)" }
   },
   "remoteUser": "vscode",
   "postCreateCommand": "mise install && bundle install"

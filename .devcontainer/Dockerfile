@@ -1,54 +1,54 @@
-FROM node:22-bookworm-slim AS node-base
-FROM ruby:3.3.6-slim-bookworm AS ruby-base
+# ── Build stages: runtimes pré-compilados (zero compile) ─────────────────────
+FROM ruby:3.3-slim AS ruby-base
+FROM node:22-slim  AS node-base
 
+# ── Imagem final ──────────────────────────────────────────────────────────────
 FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Dependências de sistema para gems nativas e ferramentas de build
+# Dependências de sistema (gems nativas, build de extensões C, ferramentas)
 RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential \
   ca-certificates \
   curl \
   git \
-  libpq-dev \
   libyaml-dev \
-  libssl-dev \
-  libreadline-dev \
-  zlib1g-dev \
+  libpq-dev \
   procps \
   sudo \
   unzip \
   zsh \
   && rm -rf /var/lib/apt/lists/*
 
-# Transplanta Node e Ruby para /usr/local sem compilação.
-# Ordem importa: Node primeiro, Ruby por cima.
-# Ruby vence conflitos e o Node mantém todos os caminhos relativos intactos
-# (resolve o "Cannot find module '../lib/cli.js'" do npm).
+# Transplante de runtimes para /usr/local sem compilação.
+# Ordem: Node primeiro → Ruby por cima.
+# Ruby vence conflitos; Node mantém caminhos relativos intactos (fix npm cli.js).
 COPY --from=node-base /usr/local /usr/local
 COPY --from=ruby-base /usr/local /usr/local
 
-# Cria usuário vscode
+# Cria usuário vscode com zsh e sudo sem senha
 RUN useradd -m -s /usr/bin/zsh vscode \
   && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER vscode
 WORKDIR /home/vscode
 
-# Instala mise apenas para gerenciamento de versões por projeto (.mise.toml)
+# Expõe o diretório de binários do mise ao PATH para todos os RUN seguintes
+ENV PATH="/home/vscode/.local/bin:$PATH"
+
+# Instala mise
 RUN curl https://mise.jdx.dev/install.sh | sh
+
+# Instala opencode via backend ubi do mise (evita instabilidades de npm 404)
+RUN mise use -g ubi:sst/opencode
 
 # Ativação do mise nos shells interativos
 RUN echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> ~/.bashrc \
   && echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >> ~/.zshrc
 
-# Instala ferramentas de IA e Segurança
-# 1. Claude Code (Anthropic)
-# 2. OpenCode
-# 3. Bitwarden CLI (bw)
-# 4. Mailcatcher & Sidekiq (Gems)
-RUN npm install -g @anthropic-ai/claude-code opencode @bitwarden/cli \
+# Ferramentas npm e gems
+RUN npm install -g @anthropic-ai/claude-code @bitwarden/cli \
   && gem install mailcatcher sidekiq
 
 CMD ["sleep", "infinity"]
