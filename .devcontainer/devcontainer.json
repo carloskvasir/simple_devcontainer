@@ -1,0 +1,50 @@
+{
+  "name": "Rails 8 Dev Environment",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": "latest",
+    "ghcr.io/devcontainers/features/common-utils:1": {
+      "configureZshAsDefaultShell": true
+    }
+  },
+  "containerEnv": {
+    "DATABASE_URL": "postgres://postgres:password@db:5432/postgres",
+    "REDIS_URL": "redis://redis:6379/1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "shopify.ruby-lsp",
+        "aki77.rails-db",
+        "castwide.solargraph",
+        "pivotal.vscode-manifest-resource"
+      ]
+    },
+    "jetbrains": {
+      "backend": "RubyMine"
+    }
+  },
+  "forwardPorts": [
+    3000,
+    5432,
+    6379,
+    1080,
+    8080
+  ],
+  "portsAttributes": {
+    "1080": {
+      "label": "Mailcatcher UI"
+    },
+    "3000": {
+      "label": "Rails Server"
+    },
+    "8080": {
+      "label": "Adminer (DB Client)"
+    }
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "mise install && bundle install"
+}

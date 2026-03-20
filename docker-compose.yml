@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspaces:cached
+    network_mode: service:db # Permite que a app veja o db como localhost
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+  mailcatcher:
+    image: sj26/mailcatcher
+    restart: always
+    ports:
+      - "1080:1080" # Web UI
+      - "1025:1025" # SMTP Port
+
+  db_admin:
+    image: adminer # Cliente leve para acessar o banco via browser
+    restart: always
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
+  redis_data:
