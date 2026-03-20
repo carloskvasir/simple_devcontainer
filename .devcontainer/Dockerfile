@@ -1,5 +1,7 @@
-FROM node:22-bookworm AS node-base
-FROM ruby:3.3.6-bookworm
+FROM node:22-bookworm-slim AS node-base
+FROM ruby:3.3.6-bookworm-slim AS ruby-base
+
+FROM debian:bookworm-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -20,11 +22,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   zsh \
   && rm -rf /var/lib/apt/lists/*
 
-# Copia apenas os binários do Node (sem sobrescrever /usr/local inteiro do Ruby)
-COPY --from=node-base /usr/local/bin/node /usr/local/bin/node
-COPY --from=node-base /usr/local/bin/npm  /usr/local/bin/npm
-COPY --from=node-base /usr/local/bin/npx  /usr/local/bin/npx
-COPY --from=node-base /usr/local/lib/node_modules /usr/local/lib/node_modules
+# Transplanta Node e Ruby para /usr/local sem compilação.
+# Ordem importa: Node primeiro, Ruby por cima.
+# Ruby vence conflitos e o Node mantém todos os caminhos relativos intactos
+# (resolve o "Cannot find module '../lib/cli.js'" do npm).
+COPY --from=node-base /usr/local /usr/local
+COPY --from=ruby-base /usr/local /usr/local
 
 # Cria usuário vscode
 RUN useradd -m -s /usr/bin/zsh vscode \
@@ -34,7 +37,6 @@ USER vscode
 WORKDIR /home/vscode
 
 # Instala mise apenas para gerenciamento de versões por projeto (.mise.toml)
-# Ruby e Node já estão disponíveis via imagens oficiais — mise não compila nada
 RUN curl https://mise.jdx.dev/install.sh | sh
 
 # Ativação do mise nos shells interativos

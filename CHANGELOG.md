@@ -35,6 +35,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.4] — 2026-03-20
+
+### Alterado
+
+- **Imagens base trocadas por variantes `-slim`** — `node:22-bookworm-slim`, `ruby:3.3.6-bookworm-slim` e `debian:bookworm-slim`. Os stages de cópia não precisam de pacotes extras do sistema; a imagem final instala explicitamente tudo o que precisa via `apt-get`. Reduz as vulnerabilidades reportadas de 3 críticas + 70 altas para o mínimo necessário
+
+---
+
 ## [0.1.3] — 2026-03-20
 
 ### Alterado
