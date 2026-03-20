@@ -1,9 +1,9 @@
-FROM debian:bookworm
+FROM node:22-bookworm AS node-base
+FROM ruby:3.3.6-bookworm
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV MISE_DATA_DIR=/home/vscode/.local/share/mise
 
-# Dependências de sistema para Rails, Bitwarden e ferramentas de build
+# Dependências de sistema para gems nativas e ferramentas de build
 RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential \
   ca-certificates \
@@ -20,6 +20,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   zsh \
   && rm -rf /var/lib/apt/lists/*
 
+# Copia apenas os binários do Node (sem sobrescrever /usr/local inteiro do Ruby)
+COPY --from=node-base /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-base /usr/local/bin/npm  /usr/local/bin/npm
+COPY --from=node-base /usr/local/bin/npx  /usr/local/bin/npx
+COPY --from=node-base /usr/local/lib/node_modules /usr/local/lib/node_modules
+
 # Cria usuário vscode
 RUN useradd -m -s /usr/bin/zsh vscode \
   && echo "vscode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -27,15 +33,13 @@ RUN useradd -m -s /usr/bin/zsh vscode \
 USER vscode
 WORKDIR /home/vscode
 
-# Instala Mise
+# Instala mise apenas para gerenciamento de versões por projeto (.mise.toml)
+# Ruby e Node já estão disponíveis via imagens oficiais — mise não compila nada
 RUN curl https://mise.jdx.dev/install.sh | sh
 
-# Instala Ruby 3.3.6 e Node 22 via Mise
-RUN /home/vscode/.local/bin/mise use --global ruby@3.3.6 \
-  && /home/vscode/.local/bin/mise use --global node@22
-
-# Expõe os shims do mise ao PATH para os próximos RUN (evita eval activate no /bin/sh)
-ENV PATH="/home/vscode/.local/share/mise/shims:/home/vscode/.local/bin:$PATH"
+# Ativação do mise nos shells interativos
+RUN echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> ~/.bashrc \
+  && echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >> ~/.zshrc
 
 # Instala ferramentas de IA e Segurança
 # 1. Claude Code (Anthropic)
@@ -44,9 +48,5 @@ ENV PATH="/home/vscode/.local/share/mise/shims:/home/vscode/.local/bin:$PATH"
 # 4. Mailcatcher & Sidekiq (Gems)
 RUN npm install -g @anthropic-ai/claude-code opencode @bitwarden/cli \
   && gem install mailcatcher sidekiq
-
-# Ativação do Mise nos shells
-RUN echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> ~/.bashrc \
-  && echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >> ~/.zshrc
 
 CMD ["sleep", "infinity"]

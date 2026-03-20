@@ -35,6 +35,17 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.3] — 2026-03-20
+
+### Alterado
+
+- **Multi-stage build com imagens oficiais** — `ruby:3.3.6-bookworm` como base e `node:22-bookworm` como stage de origem para o Node. Ruby e Node vêm pré-compilados; o tempo de build cai de ~10 minutos para segundos
+- **COPY seletivo do Node** — em vez de `COPY --from=node-base /usr/local /usr/local` (que sobrescreveria o `/usr/local` inteiro do Ruby), copia apenas `bin/node`, `bin/npm`, `bin/npx` e `lib/node_modules`, evitando conflitos de arquivos entre as duas imagens
+- **`mise use --global` removido** — mise não precisa mais compilar Ruby e Node; fica instalado apenas para gerenciamento de versões por projeto via `.mise.toml`. `MISE_DATA_DIR` e os `RUN mise use` foram removidos
+- **`ENV PATH` dos shims removido** — desnecessário agora que Ruby e Node estão diretamente no `PATH` do sistema (`/usr/local/bin`)
+
+---
+
 ## [0.1.2] — 2026-03-20
 
 ### Corrigido
