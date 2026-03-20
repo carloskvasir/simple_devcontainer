@@ -12,7 +12,11 @@
     }
   },
   "containerEnv": {
-    "DATABASE_URL": "postgres://postgres:password@localhost:5432/postgres",
+    "DB_HOST": "db",
+    "DB_PORT": "5432",
+    "DB_USERNAME": "postgres",
+    "DB_PASSWORD": "password",
+    "DATABASE_URL": "postgres://postgres:password@db:5432/postgres",
     "REDIS_URL": "redis://localhost:6379/1"
   },
   "customizations": {
@@ -37,9 +41,15 @@
     8080
   ],
   "portsAttributes": {
-    "3000": { "label": "Rails Server" },
-    "1080": { "label": "Mailcatcher UI" },
-    "8080": { "label": "Adminer (DB Client)" }
+    "3000": {
+      "label": "Rails Server"
+    },
+    "1080": {
+      "label": "Mailcatcher UI"
+    },
+    "8080": {
+      "label": "Adminer (DB Client)"
+    }
   },
   "remoteUser": "vscode",
   "postCreateCommand": "mise install && bundle install"
