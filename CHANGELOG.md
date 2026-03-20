@@ -35,4 +35,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.1] — 2026-03-20
+
+### Corrigido
+
+- **`zsh` adicionado ao apt-get** — o `useradd -s /usr/bin/zsh` falhava silenciosamente porque zsh não estava instalado na imagem base
+- **Caminho do binário do mise corrigido** — o script de instalação do mise coloca o binário em `~/.local/bin/mise`, não em `~/.local/share/mise/bin/mise`. O `MISE_DATA_DIR` controla apenas onde os runtimes (Ruby, Node) são armazenados. Todas as referências no `Dockerfile` foram corrigidas, incluindo as linhas de ativação no `.bashrc` e `.zshrc`
+
+---
+
+<!-- [0.1.1]: https://github.com/carloskvasir/simple_devcontainer/releases/tag/v0.1.1 -->
 <!-- [0.1.0]: https://github.com/carloskvasir/simple_devcontainer/releases/tag/v0.1.0 -->

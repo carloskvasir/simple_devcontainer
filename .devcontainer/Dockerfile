@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   procps \
   sudo \
   unzip \
+  zsh \
   && rm -rf /var/lib/apt/lists/*
 
 # Cria usuário vscode
@@ -30,20 +31,20 @@ WORKDIR /home/vscode
 RUN curl https://mise.jdx.dev/install.sh | sh
 
 # Instala Ruby 3.3.6 e Node 22 via Mise
-RUN /home/vscode/.local/share/mise/bin/mise use --global ruby@3.3.6 \
-  && /home/vscode/.local/share/mise/bin/mise use --global node@22
+RUN /home/vscode/.local/bin/mise use --global ruby@3.3.6 \
+  && /home/vscode/.local/bin/mise use --global node@22
 
 # Instala ferramentas de IA e Segurança
 # 1. Claude Code (Anthropic)
 # 2. OpenCode
 # 3. Bitwarden CLI (bw)
 # 4. Mailcatcher & Sidekiq (Gems)
-RUN eval "$(/home/vscode/.local/share/mise/bin/mise activate bash)" \
+RUN eval "$(/home/vscode/.local/bin/mise activate bash)" \
   && npm install -g @anthropic-ai/claude-code opencode @bitwarden/cli \
   && gem install mailcatcher sidekiq
 
 # Ativação do Mise nos shells
-RUN echo 'eval "$($HOME/.local/share/mise/bin/mise activate bash)"' >> ~/.bashrc \
-  && echo 'eval "$($HOME/.local/share/mise/bin/mise activate zsh)"' >> ~/.zshrc
+RUN echo 'eval "$($HOME/.local/bin/mise activate bash)"' >> ~/.bashrc \
+  && echo 'eval "$($HOME/.local/bin/mise activate zsh)"' >> ~/.zshrc
 
 CMD ["sleep", "infinity"]
