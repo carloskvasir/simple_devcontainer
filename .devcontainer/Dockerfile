@@ -34,13 +34,15 @@ RUN curl https://mise.jdx.dev/install.sh | sh
 RUN /home/vscode/.local/bin/mise use --global ruby@3.3.6 \
   && /home/vscode/.local/bin/mise use --global node@22
 
+# Expõe os shims do mise ao PATH para os próximos RUN (evita eval activate no /bin/sh)
+ENV PATH="/home/vscode/.local/share/mise/shims:/home/vscode/.local/bin:$PATH"
+
 # Instala ferramentas de IA e Segurança
 # 1. Claude Code (Anthropic)
 # 2. OpenCode
 # 3. Bitwarden CLI (bw)
 # 4. Mailcatcher & Sidekiq (Gems)
-RUN eval "$(/home/vscode/.local/bin/mise activate bash)" \
-  && npm install -g @anthropic-ai/claude-code opencode @bitwarden/cli \
+RUN npm install -g @anthropic-ai/claude-code opencode @bitwarden/cli \
   && gem install mailcatcher sidekiq
 
 # Ativação do Mise nos shells

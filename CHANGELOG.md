@@ -35,6 +35,14 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.1.2] — 2026-03-20
+
+### Corrigido
+
+- **`eval "$(mise activate bash)"` removido do `RUN`** — o Docker executa `RUN` com `/bin/sh` (dash no Debian), que não suporta sintaxe bash como `[[` e `export -a`. Substituído por `ENV PATH` apontando para o diretório de shims do mise (`~/.local/share/mise/shims`), que é suficiente para que `npm` e `gem` sejam encontrados nos passos de build subsequentes
+
+---
+
 ## [0.1.1] — 2026-03-20
 
 ### Corrigido
